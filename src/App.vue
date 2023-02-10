@@ -1,14 +1,15 @@
+
 <!-- template для написання розмітки - це шаблон, структура компоненту -->
 <template>
+   <!--@ - більш короткий запис v-on:-->
+   <!--{{ }} - спеціальний синтаксис "інтерполяція"-->
+   <!-- <div><strong>Назва: </strong>Пост про JS</div>
+         <div><strong>Опис: </strong>JS - мова програмування</div> -->
    <div>
-      <div>
-         <button v-on:click="addLike">Like</button>
-         <!--@ - більш короткий запис v-on:-->
-         <button @click="addDislike">Dislike</button>
+      <div class="post" v-for="post in posts">
+         <div><strong>Назва: </strong>{{ post.title }}</div>
+         <div><strong>Опис: </strong>{{ post.body }}</div>
       </div>
-      <!--{{ }} - спеціальний синтаксис "інтерполяція"-->
-      <div>кількість лайків - {{ likes }}</div>
-      <div>кількість дизлайків - {{ dislikes }}</div>
    </div>
 </template>
 
@@ -19,23 +20,31 @@ export default {
    //об'єкти з даними
    data() {
       return {
-         likes: 0,
-         dislikes: 0,
+         posts: [
+            { id: 1, title: 'JS', body: 'опис посту' },
+            { id: 2, title: 'JS 2', body: 'опис посту 2' },
+            { id: 3, title: 'JS 3', body: 'опис посту 3' },
+         ]
       }
    },
    //методи для роботи з даними
    methods: {
-      addLike() {
-         //тут напряму звернули до likes, пропустивши data
-         this.likes += 1;
-      },
-      addDislike() {
-         this.dislikes += 1;
-      },
+
    }
 }
 </script>
 
+<!-- флаг scoped вказує, що стилі будуть застосована тільти для "цього" компоненту, й не будуть доступні ззовні -->
 <style>
+* {
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+}
 
+.post {
+   margin-top: 15px;
+   padding: 15px;
+   border: 2px solid teal;
+}
 </style>
