@@ -5,7 +5,13 @@
    <!--{{ }} - спеціальний синтаксис "інтерполяція"-->
    <!-- <div><strong>Назва: </strong>Пост про JS</div>
          <div><strong>Опис: </strong>JS - мова програмування</div> -->
-   <div>
+   <div class="app">
+      <form class="post-form">
+         <h4>Створення посту</h4>
+         <input class="post-input" type="text" placeholder="Назва" />
+         <input class="post-input" type="text" placeholder="Опис" />
+         <button class="post-btn btn" @click="createPost">Створити</button>
+      </form>
       <div class="post" v-for="post in posts">
          <div><strong>Назва: </strong>{{ post.title }}</div>
          <div><strong>Опис: </strong>{{ post.body }}</div>
@@ -29,7 +35,9 @@ export default {
    },
    //методи для роботи з даними
    methods: {
+      createPost() {
 
+      }
    }
 }
 </script>
@@ -40,6 +48,32 @@ export default {
    margin: 0;
    padding: 0;
    box-sizing: border-box;
+}
+
+.app {
+   padding: 20px;
+}
+
+.btn {
+   align-self: flex-end;
+   margin-top: 15px;
+   padding: 10px 15px;
+   background: none;
+   color: teal;
+   border: 1px solid teal;
+   cursor: pointer;
+}
+
+.post-form {
+   display: flex;
+   flex-direction: column;
+}
+
+.post-input {
+   width: 100%;
+   border: 1px solid teal;
+   padding: 10px 15px;
+   margin-top: 15px;
 }
 
 .post {
