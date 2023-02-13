@@ -6,10 +6,10 @@
    <!-- <div><strong>Назва: </strong>Пост про JS</div>
          <div><strong>Опис: </strong>JS - мова програмування</div> -->
    <div class="app">
-      <form class="post-form">
+      <form class="post-form" @submit.prevent>
          <h4>Створення посту</h4>
-         <input class="post-input" type="text" placeholder="Назва" />
-         <input class="post-input" type="text" placeholder="Опис" />
+         <input v-bind:value="title" @input="title = $event.target.value" class="post-input" type="text" placeholder="Назва" />
+         <input v-bind:value="body" @input="body = $event.target.value" class="post-input" type="text" placeholder="Опис" />
          <button class="post-btn btn" @click="createPost">Створити</button>
       </form>
       <div class="post" v-for="post in posts">
@@ -23,20 +23,32 @@
 <script>
 // за зомовчуванням ми повинні єкспортувати об'єкт, всі інше це лише цукор
 export default {
-   //об'єкти з даними
+   //об'єкти з даними - моделі
    data() {
       return {
          posts: [
             { id: 1, title: 'JS', body: 'опис посту' },
             { id: 2, title: 'JS 2', body: 'опис посту 2' },
             { id: 3, title: 'JS 3', body: 'опис посту 3' },
-         ]
+         ],
+         title: '',
+         body: '',
       }
    },
    //методи для роботи з даними
    methods: {
       createPost() {
-
+         const newPost = {
+            id: Date.now(),
+            title: this.title,
+            body: this.body,
+         }
+         this.posts.push(newPost);
+         this.title = '';
+         this.body = '';
+      },
+      inputValue(event) {
+         this.title = event.target.value;
       }
    }
 }
