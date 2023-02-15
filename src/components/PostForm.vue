@@ -4,11 +4,13 @@
 <!--"v-model=" -короткий запис "v-bind:value="+"@input="* = $event.target.value""-->
          <input v-model="post.title" class="post-input" type="text" placeholder="Назва" />
          <input v-bind:value="post.body" @input="post.body = $event.target.value" class="post-input" type="text" placeholder="Опис" />
-         <button class="post-btn btn" @click="createPost">Створити</button>
+         <my-button style="align-self: flex-end; margin-top: 15px;" @click="createPost">Створити</my-button>
       </form>
 </template>
 <script>
+import MyButton from '@/components/UI/MyButton.vue';
 export default {
+   components: { MyButton },
    data() {
       return {
          post: {
@@ -35,16 +37,6 @@ export default {
 }
 </script>
 <style scoped>
-.btn {
-   align-self: flex-end;
-   margin-top: 15px;
-   padding: 10px 15px;
-   background: none;
-   color: teal;
-   border: 1px solid teal;
-   cursor: pointer;
-}
-
 .post-form {
    display: flex;
    flex-direction: column;
