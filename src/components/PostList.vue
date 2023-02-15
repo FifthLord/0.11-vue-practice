@@ -1,22 +1,24 @@
 <template lang="">
-      <div class="post" v-for="post in posts">
-         <div><strong>Назва: </strong>{{ post.title }}</div>
-         <div><strong>Опис: </strong>{{ post.body }}</div>
-      </div>
+   <div>
+      <h3>Список користувачів</h3>
+      <!--: - більш короткий запис v-bind:-->
+      <!--передали сюди список постів як пропс, а далі вже пропс - це окремий пост-->
+      <post-item v-for="post in posts" :post="post"/>
+   </div>
 </template>
 <script>
+import PostItem from '@/components/PostItem.vue';
 export default {
+   components: { PostItem },
    props: {
-      posts: Array,
-      required: true,
+      posts: {
+         type: Array,
+         required: true,
+      }
    }
 }
 </script>
 
 <style scoped>
-.post {
-   margin-top: 15px;
-   padding: 15px;
-   border: 2px solid teal;
-}
+
 </style>
