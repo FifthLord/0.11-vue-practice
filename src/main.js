@@ -1,5 +1,13 @@
-import { createApp } from 'vue'
-import App from './App.vue'
+import { createApp } from 'vue';
+import App from './App.vue';
+import components from '@/components/UI';
+
+const app = createApp(App);
+
+//глобальна реестрація компоненту(ів) для уникнення необхідності імпорту його(їх) окремо в кожен модуль
+components.forEach(component => {
+   app.component(component.name, component)
+})
 
 //створення єкземпляру апки й монтування його по ІД в корневий дів (папка public/index)
-createApp(App).mount('#app')
+app.mount('#app')
