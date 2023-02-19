@@ -18,6 +18,7 @@
 <script>
 import PostList from '@/components/PostList.vue';
 import PostForm from '@/components/PostForm.vue';
+import axios from 'axios';
 // за зомовчуванням ми повинні єкспортувати об'єкт, всі інше це лише цукор
 export default {
    components: {
@@ -26,11 +27,7 @@ export default {
    //об'єкти з даними - моделі
    data() {
       return {
-         posts: [
-            { id: 1, title: 'JS', body: 'опис посту' },
-            { id: 2, title: 'JS 2', body: 'опис посту 2' },
-            { id: 3, title: 'JS 3', body: 'опис посту 3' },
-         ],
+         posts: [],
          dialogVisible: false,
       }
    },
@@ -46,7 +43,22 @@ export default {
       showDialog() {
          this.dialogVisible = true;
       },
-   }
+      //робимо запит на сервер, отримуємо об'єкт з полем data - додаємо це це в posts.
+      async fetchPosts() {
+         // response - традиційно результат запиту на сервер.
+         try {
+            const response = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=10');
+            this.posts = response.data;
+         } catch (e) {
+            console.log("Помилка");
+         }
+      },
+      //хук mounted буде виконуватися після того як компонент був "змонтований" (див. життевий цикл компоненту)
+      //в данному випадку він викликає запит на сервер за постами
+      mounted() {
+         this.fetchPosts();
+      },
+   },
 }
 </script>
 
