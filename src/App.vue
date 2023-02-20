@@ -10,7 +10,8 @@
       <my-dialog v-model:show="dialogVisible">
          <post-form @create="createPost" />
       </my-dialog>
-      <post-list :posts="posts" @remove="removePost" />
+      <post-list :posts="posts" @remove="removePost" v-if="!isPostsLoading" />
+      <div v-else>Йде завантаження...</div>
    </div>
 </template>
 
@@ -29,6 +30,7 @@ export default {
       return {
          posts: [],
          dialogVisible: false,
+         isPostsLoading: false,
       }
    },
    //методи для роботи з даними
@@ -47,10 +49,13 @@ export default {
       async fetchPosts() {
          // response - традиційно результат запиту на сервер.
          try {
+            this.isPostsLoading = true;
             const response = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=10');
             this.posts = response.data;
          } catch (e) {
             console.log("Помилка");
+         } finally {
+            this.isPostsLoading = false;
          }
       },
    },
