@@ -13,7 +13,8 @@
       <my-dialog v-model:show="dialogVisible">
          <post-form @create="createPost" />
       </my-dialog>
-      <post-list :posts="posts" @remove="removePost" v-if="!isPostsLoading" />
+      <!-- <post-list :posts="posts" @remove="removePost" v-if="!isPostsLoading" /> -->
+      <post-list :posts="sortedPosts" @remove="removePost" v-if="!isPostsLoading" />
       <div v-else>Йде завантаження...</div>
    </div>
 </template>
@@ -72,6 +73,27 @@ export default {
    mounted() {
       this.fetchPosts();
    },
+   //використовуємо computed: sortedPosts() як звичайну змінну - вставляючи її в компонент
+   computed: {
+      sortedPosts() {
+         //розгортаємо в новий масив для уникнення мутації вихідного масиву
+         //нижче watch через localeCompare мутує вихідний масив
+         return [...this.posts].sort((post1, post2) => {
+            return post1[this.selectedSort]?.localeCompare(post2[this.selectedSort])
+         })
+      }
+   },
+   //функція наглядач яка знаходитсья у watch має мати таку ж назву як й 
+   //модель за якою "наблюдаємо" - параметром вона приймає нове значення моделі
+   // watch: {
+   // selectedSort(newValue) {
+   //    this.posts.sort((post1, post2) => {
+   //       return post1[newValue]?.localeCompare(post2[newValue])
+   //    })
+   // }
+   //,deep: true - глубоке відстеження, коли потрібно реагувати на бідь-яку зміну в моделі.
+   //наприклад якщо модель - об'єкт.
+   // }
 }
 </script>
 
