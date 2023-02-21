@@ -1,5 +1,4 @@
 <template>
-   <!-- <div class="post" v-for="post in posts"></div> -->
    <div class="post">
       <div>
          <div><strong>Назва: </strong>{{ post.title }}</div>
