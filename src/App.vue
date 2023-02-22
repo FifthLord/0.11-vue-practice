@@ -17,6 +17,14 @@
       <!-- <post-list :posts="posts" @remove="removePost" v-if="!isPostsLoading" /> -->
       <post-list :posts="sortedAndSearchedPosts" @remove="removePost" v-if="!isPostsLoading" />
       <div v-else>Йде завантаження...</div>
+      <div class="p-count__wrapper">
+         <!-- :class - динамічний клас який ми "біндимо" зі стилем та умовою його true-->
+         <div v-for="pageNum in totalPages" :key="pageNum" class="p-count" :class="{
+            'current-p-count': page === pageNum
+         }" @click="changePage(pageNum)">
+            {{ pageNum }}
+         </div>
+      </div>
    </div>
 </template>
 
@@ -38,6 +46,9 @@ export default {
          isPostsLoading: false,
          selectedSort: '',
          searchQuery: '',
+         page: 1,
+         limit: 10,
+         totalPages: 0,
          sortOptions: [
             { value: 'title', name: 'по назві' },
             { value: 'body', name: 'по опису' },
@@ -56,12 +67,20 @@ export default {
       showDialog() {
          this.dialogVisible = true;
       },
+      changePage(pageNum) {
+         this.page = pageNum;
+      },
       //робимо запит на сервер, отримуємо об'єкт з полем data - додаємо це це в posts.
       async fetchPosts() {
          // response - традиційно результат запиту на сервер.
          try {
             this.isPostsLoading = true;
-            const response = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=10');
+            const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
+               params: {
+                  _page: this.page,
+               }
+            });
+            this.totalPages = Math.ceil(response.headers['x-total-count'] / this.limit)
             this.posts = response.data;
          } catch (e) {
             console.log("Помилка");
@@ -93,15 +112,12 @@ export default {
    //функція наглядач яка знаходитсья у watch має мати таку ж назву як й 
    //модель за якою "наблюдаємо" - параметром вона приймає нове значення моделі
    //watch - аналог useEffect в React
-   // watch: {
-   // selectedSort(newValue) {
-   //    this.posts.sort((post1, post2) => {
-   //       return post1[newValue]?.localeCompare(post2[newValue])
-   //    })
-   // }
-   //,deep: true - глубоке відстеження, коли потрібно реагувати на бідь-яку зміну в моделі.
-   //наприклад якщо модель - об'єкт.
-   // }
+   watch: {
+      //реагуємо на зміну в page - запуском фетч запиту
+      page() {
+         this.fetchPosts()
+      }
+   }
 }
 </script>
 
@@ -121,5 +137,22 @@ export default {
    margin: 15px 0;
    display: flex;
    justify-content: space-between;
+}
+
+.p-count__wrapper {
+   display: flex;
+   margin-top: 15px;
+   justify-content: center;
+}
+
+.p-count {
+   border: 1px solid black;
+   padding: 10px;
+   margin: 2px;
+   cursor: pointer;
+}
+
+.current-p-count {
+   border: 2px solid teal;
 }
 </style>
