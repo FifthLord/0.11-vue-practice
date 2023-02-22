@@ -6,6 +6,7 @@
 <template>
    <div class="app">
       <h1>Сторінка з постами</h1>
+      <my-input v-model="searchQuery" placeholder="Пошук..." />
       <div class="app__btns">
          <my-button @click="showDialog">Створити пост</my-button>
          <my-select v-model="selectedSort" :options="sortOptions"></my-select>
@@ -14,7 +15,7 @@
          <post-form @create="createPost" />
       </my-dialog>
       <!-- <post-list :posts="posts" @remove="removePost" v-if="!isPostsLoading" /> -->
-      <post-list :posts="sortedPosts" @remove="removePost" v-if="!isPostsLoading" />
+      <post-list :posts="sortedAndSearchedPosts" @remove="removePost" v-if="!isPostsLoading" />
       <div v-else>Йде завантаження...</div>
    </div>
 </template>
@@ -36,6 +37,7 @@ export default {
          dialogVisible: false,
          isPostsLoading: false,
          selectedSort: '',
+         searchQuery: '',
          sortOptions: [
             { value: 'title', name: 'по назві' },
             { value: 'body', name: 'по опису' },
@@ -74,6 +76,7 @@ export default {
       this.fetchPosts();
    },
    //використовуємо computed: sortedPosts() як звичайну змінну - вставляючи її в компонент
+   //computed - майже аналог useMemo в React
    computed: {
       sortedPosts() {
          //розгортаємо в новий масив для уникнення мутації вихідного масиву
@@ -81,10 +84,15 @@ export default {
          return [...this.posts].sort((post1, post2) => {
             return post1[this.selectedSort]?.localeCompare(post2[this.selectedSort])
          })
+      },
+      //відсортований та фільтрований за пошуком масив заголовків постів
+      sortedAndSearchedPosts() {
+         return this.sortedPosts.filter(post => post.title.toLowerCase().includes(this.searchQuery.toLowerCase()))
       }
    },
    //функція наглядач яка знаходитсья у watch має мати таку ж назву як й 
    //модель за якою "наблюдаємо" - параметром вона приймає нове значення моделі
+   //watch - аналог useEffect в React
    // watch: {
    // selectedSort(newValue) {
    //    this.posts.sort((post1, post2) => {
