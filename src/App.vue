@@ -17,14 +17,17 @@
       <!-- <post-list :posts="posts" @remove="removePost" v-if="!isPostsLoading" /> -->
       <post-list :posts="sortedAndSearchedPosts" @remove="removePost" v-if="!isPostsLoading" />
       <div v-else>Йде завантаження...</div>
-      <div class="p-count__wrapper">
-         <!-- :class - динамічний клас який ми "біндимо" зі стилем та умовою його true-->
+   <!--ref - вказуємо обсерверу за яким елементом необхідно слідкувати-->
+   <!--ref дозволяє обримати напряму доступ до ДОМ елементу (ІМХО аналог querySelector)-->
+   <div ref="observer" class="observer"></div>
+   <!-- :class - динамічний клас який ми "біндимо" зі стилем та умовою його true-->
+   <!-- <div class="p-count__wrapper">
          <div v-for="pageNum in totalPages" :key="pageNum" class="p-count" :class="{
-            'current-p-count': page === pageNum
-         }" @click="changePage(pageNum)">
-            {{ pageNum }}
-         </div>
-      </div>
+                                                         'current-p-count': page === pageNum
+                                                      }" @click="changePage(pageNum)">
+                                                         {{ pageNum }}
+                                                      </div>
+                                                   </div> -->
    </div>
 </template>
 
@@ -67,9 +70,9 @@ export default {
       showDialog() {
          this.dialogVisible = true;
       },
-      changePage(pageNum) {
-         this.page = pageNum;
-      },
+      // changePage(pageNum) {
+      //    this.page = pageNum;
+      // },
       //робимо запит на сервер, отримуємо об'єкт з полем data - додаємо це це в posts.
       async fetchPosts() {
          // response - традиційно результат запиту на сервер.
@@ -88,11 +91,35 @@ export default {
             this.isPostsLoading = false;
          }
       },
+      async loadMorePosts() {
+         try {
+            const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
+               params: {
+                  _page: this.page,
+               }
+            });
+            this.totalPages = Math.ceil(response.headers['x-total-count'] / this.limit)
+            this.posts = [...this.posts, ...response.data]
+         } catch (e) {
+            console.log("Помилка");
+         }
+      },
    },
    //хук mounted буде виконуватися після того як компонент був "змонтований" (див. життевий цикл компоненту)
    //в данному випадку він викликає запит на сервер за постами
    mounted() {
       this.fetchPosts();
+      const options = {
+         rootMargin: '0px',
+         threshold: 1.0
+      }
+      const callback = (entries, observer) => {
+         if (entries[0].isIntersecting && this.page < this.totalPages) {
+            this.loadMorePosts()
+         }
+      };
+      const observer = new IntersectionObserver(callback, options);
+      observer.observe(this.$refs.observer);
    },
    //використовуємо computed: sortedPosts() як звичайну змінну - вставляючи її в компонент
    //computed - майже аналог useMemo в React
@@ -114,9 +141,9 @@ export default {
    //watch - аналог useEffect в React
    watch: {
       //реагуємо на зміну в page - запуском фетч запиту
-      page() {
-         this.fetchPosts()
-      }
+      // page() {
+      //    this.fetchPosts()
+      // }
    }
 }
 </script>
@@ -154,5 +181,10 @@ export default {
 
 .current-p-count {
    border: 2px solid teal;
+}
+
+.observer {
+   height: 2px;
+   background: teal;
 }
 </style>
