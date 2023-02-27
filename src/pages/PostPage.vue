@@ -1,8 +1,8 @@
 
 <!-- template для написання розмітки - це шаблон, структура компоненту -->
 <!--@ - більш короткий запис v-on:-->
-   <!--: - більш короткий запис v-bind:-->
-   <!--{{ }} - спеціальний синтаксис "інтерполяція" (аналог ${})-->
+<!--: - більш короткий запис v-bind:-->
+<!--{{ }} - спеціальний синтаксис "інтерполяція" (аналог ${})-->
 <template>
    <div>
       <h1>Сторінка з постами</h1>
@@ -17,17 +17,11 @@
       <!-- <post-list :posts="posts" @remove="removePost" v-if="!isPostsLoading" /> -->
       <post-list :posts="sortedAndSearchedPosts" @remove="removePost" v-if="!isPostsLoading" />
       <div v-else>Йде завантаження...</div>
-   <!--ref - вказуємо обсерверу за яким елементом необхідно слідкувати-->
-   <!--ref дозволяє обримати напряму доступ до ДОМ елементу (ІМХО аналог querySelector)-->
-   <div ref="observer" class="observer"></div>
-   <!-- :class - динамічний клас який ми "біндимо" зі стилем та умовою його true-->
-   <!-- <div class="p-count__wrapper">
-            <div v-for="pageNum in totalPages" :key="pageNum" class="p-count" :class="{
-                                                                     'current-p-count': page === pageNum
-                                                                  }" @click="changePage(pageNum)">
-                                                                     {{ pageNum }}
-                                                                  </div>
-                                                               </div> -->
+      <!--ref - вказуємо обсерверу за яким елементом необхідно слідкувати-->
+      <!--ref дозволяє обримати напряму доступ до ДОМ елементу (ІМХО аналог querySelector)-->
+      <!-- <div ref="observer" class="observer"></div> -->
+      <div v-intersection="loadMorePosts" class="observer"></div>
+      <!-- :class - динамічний клас який ми "біндимо" зі стилем та умовою його true-->
    </div>
 </template>
    
@@ -109,17 +103,17 @@ export default {
    //в данному випадку він викликає запит на сервер за постами
    mounted() {
       this.fetchPosts();
-      const options = {
-         rootMargin: '0px',
-         threshold: 1.0
-      }
-      const callback = (entries, observer) => {
-         if (entries[0].isIntersecting && this.page < this.totalPages) {
-            this.loadMorePosts()
-         }
-      };
-      const observer = new IntersectionObserver(callback, options);
-      observer.observe(this.$refs.observer);
+      // const options = {
+      //    rootMargin: '0px',
+      //    threshold: 1.0
+      // }
+      // const callback = (entries, observer) => {
+      //    if (entries[0].isIntersecting && this.page < this.totalPages) {
+      //       this.loadMorePosts()
+      //    }
+      // };
+      // const observer = new IntersectionObserver(callback, options);
+      // observer.observe(this.$refs.observer);
    },
    //використовуємо computed: sortedPosts() як звичайну змінну - вставляючи її в компонент
    //computed - майже аналог useMemo в React
