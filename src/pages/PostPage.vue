@@ -87,6 +87,7 @@ export default {
       },
       async loadMorePosts() {
          try {
+            this.page += 1;
             const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
                params: {
                   _page: this.page,
