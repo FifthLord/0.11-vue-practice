@@ -4,6 +4,7 @@
       <div class="navbar__btns">
          <my-button @click="$router.push('/posts')">Пости</my-button>
          <my-button @click="$router.push('/about')" style="margin-left: 5px;">Про сайт</my-button>
+         <my-button @click="$router.push('/store')" style="margin-left: 5px;">PostPageVuex</my-button>
       </div>
    </div>
 </template>

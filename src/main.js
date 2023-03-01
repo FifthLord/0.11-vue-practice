@@ -1,8 +1,9 @@
 import { createApp } from 'vue';
-import App from './App.vue';
+import App from '@/App.vue';
 import components from '@/components/UI';
-import router from './router/router';
-import directives from './directives/index';
+import router from '@/router/router';
+import directives from '@/directives/index';
+import store from '@/store';
 
 const app = createApp(App);
 
@@ -19,4 +20,5 @@ directives.forEach(directive => {
 //створення єкземпляру апки й монтування його по ІД в корневий дів (папка public/index)
 app
    .use(router)
+   .use(store)
    .mount('#app')
