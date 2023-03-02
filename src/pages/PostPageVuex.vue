@@ -1,25 +1,25 @@
 
 <template>
    <div>
-      <h1>{{ $store.state.post.limit }}</h1>
-   <!-- <h1>Сторінка з постами</h1>
-      <my-input v-model="searchQuery" placeholder="Пошук..." />
+      <h1>Сторінка з постами</h1>
+      <!-- <my-input v-model="searchQuery" placeholder="Пошук..." /> -->
       <div class="app__btns">
          <my-button @click="showDialog">Створити пост</my-button>
-         <my-select v-model="selectedSort" :options="sortOptions"></my-select>
+         <!-- <my-select v-model="selectedSort" :options="sortOptions"></my-select> -->
       </div>
       <my-dialog v-model:show="dialogVisible">
          <post-form @create="createPost" />
       </my-dialog>
       <post-list :posts="sortedAndSearchedPosts" @remove="removePost" v-if="!isPostsLoading" />
       <div v-else>Йде завантаження...</div>
-                     <div v-intersection="loadMorePosts" class="observer"></div> -->
+      <div v-intersection="loadMorePosts" class="observer"></div>
    </div>
 </template>
    
 <script>
 import PostList from '@/components/PostList.vue';
 import PostForm from '@/components/PostForm.vue';
+import { mapState, mapGetters, mapActions, mapMutations } from 'vuex';
 
 export default {
    components: {
@@ -32,6 +32,13 @@ export default {
    },
 
    methods: {
+      ...mapMutations({
+         setPage: 'post/setPage'
+      }),
+      ...mapActions({
+         loadMorePosts: 'post/loadMorePosts',
+         fetchPosts: 'post/fetchPosts'
+      }),
       createPost(post) {
          this.posts.push(post);
          this.dialogVisible = false;
@@ -44,10 +51,23 @@ export default {
       },
    },
    mounted() {
-      // this.fetchPosts();
+      this.fetchPosts();
    },
    computed: {
-
+      ...mapState({
+         posts: state => state.post.posts,
+         isPostsLoading: state => state.post.isPostsLoading,
+         selectedSort: state => state.post.selectedSort,
+         searchQuery: state => state.post.searchQuery,
+         page: state => state.post.page,
+         limit: state => state.post.limit,
+         totalPages: state => state.post.totalPages,
+         sortOptions: state => state.post.sortOptions
+      }),
+      ...mapGetters({
+         sortedPosts: 'post/sortedPosts',
+         sortedAndSearchedPosts: 'post/sortedAndSearchedPosts',
+      })
    },
 }
 </script>
