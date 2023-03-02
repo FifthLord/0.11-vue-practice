@@ -1,11 +1,8 @@
 
-<!-- template для написання розмітки - це шаблон, структура компоненту -->
-<!--@ - більш короткий запис v-on:-->
-<!--: - більш короткий запис v-bind:-->
-<!--{{ }} - спеціальний синтаксис "інтерполяція" (аналог ${})-->
 <template>
    <div>
-      <h1>Сторінка з постами</h1>
+      <h1>{{ $store.state.post.limit }}</h1>
+   <!-- <h1>Сторінка з постами</h1>
       <my-input v-model="searchQuery" placeholder="Пошук..." />
       <div class="app__btns">
          <my-button @click="showDialog">Створити пост</my-button>
@@ -14,45 +11,26 @@
       <my-dialog v-model:show="dialogVisible">
          <post-form @create="createPost" />
       </my-dialog>
-      <!-- <post-list :posts="posts" @remove="removePost" v-if="!isPostsLoading" /> -->
       <post-list :posts="sortedAndSearchedPosts" @remove="removePost" v-if="!isPostsLoading" />
       <div v-else>Йде завантаження...</div>
-      <!--ref - вказуємо обсерверу за яким елементом необхідно слідкувати-->
-      <!--ref дозволяє обримати напряму доступ до ДОМ елементу (ІМХО аналог querySelector)-->
-      <!-- <div ref="observer" class="observer"></div> -->
-      <div v-intersection="loadMorePosts" class="observer"></div>
-      <!-- :class - динамічний клас який ми "біндимо" зі стилем та умовою його true-->
+                     <div v-intersection="loadMorePosts" class="observer"></div> -->
    </div>
 </template>
    
-   <!-- script для написпання скриптів, функцій, коду компоненту -->
 <script>
 import PostList from '@/components/PostList.vue';
 import PostForm from '@/components/PostForm.vue';
-import axios from 'axios';
-// за зомовчуванням ми повинні єкспортувати об'єкт, всі інше це лише цукор
+
 export default {
    components: {
       PostForm, PostList
    },
-   //об'єкти з даними - моделі
    data() {
       return {
-         posts: [],
          dialogVisible: false,
-         isPostsLoading: false,
-         selectedSort: '',
-         searchQuery: '',
-         page: 1,
-         limit: 10,
-         totalPages: 0,
-         sortOptions: [
-            { value: 'title', name: 'по назві' },
-            { value: 'body', name: 'по опису' },
-         ]
       }
    },
-   //методи для роботи з даними
+
    methods: {
       createPost(post) {
          this.posts.push(post);
@@ -64,86 +42,16 @@ export default {
       showDialog() {
          this.dialogVisible = true;
       },
-      // changePage(pageNum) {
-      //    this.page = pageNum;
-      // },
-      //робимо запит на сервер, отримуємо об'єкт з полем data - додаємо це це в posts.
-      async fetchPosts() {
-         // response - традиційно результат запиту на сервер.
-         try {
-            this.isPostsLoading = true;
-            const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
-               params: {
-                  _page: this.page,
-               }
-            });
-            this.totalPages = Math.ceil(response.headers['x-total-count'] / this.limit)
-            this.posts = response.data;
-         } catch (e) {
-            console.log("Помилка");
-         } finally {
-            this.isPostsLoading = false;
-         }
-      },
-      async loadMorePosts() {
-         try {
-            this.page += 1;
-            const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
-               params: {
-                  _page: this.page,
-               }
-            });
-            this.totalPages = Math.ceil(response.headers['x-total-count'] / this.limit)
-            this.posts = [...this.posts, ...response.data]
-         } catch (e) {
-            console.log("Помилка");
-         }
-      },
    },
-   //хук mounted буде виконуватися після того як компонент був "змонтований" (див. життевий цикл компоненту)
-   //в данному випадку він викликає запит на сервер за постами
    mounted() {
-      this.fetchPosts();
-      // const options = {
-      //    rootMargin: '0px',
-      //    threshold: 1.0
-      // }
-      // const callback = (entries, observer) => {
-      //    if (entries[0].isIntersecting && this.page < this.totalPages) {
-      //       this.loadMorePosts()
-      //    }
-      // };
-      // const observer = new IntersectionObserver(callback, options);
-      // observer.observe(this.$refs.observer);
+      // this.fetchPosts();
    },
-   //використовуємо computed: sortedPosts() як звичайну змінну - вставляючи її в компонент
-   //computed - майже аналог useMemo в React
    computed: {
-      sortedPosts() {
-         //розгортаємо в новий масив для уникнення мутації вихідного масиву
-         //нижче watch через localeCompare мутує вихідний масив
-         return [...this.posts].sort((post1, post2) => {
-            return post1[this.selectedSort]?.localeCompare(post2[this.selectedSort])
-         })
-      },
-      //відсортований та фільтрований за пошуком масив заголовків постів
-      sortedAndSearchedPosts() {
-         return this.sortedPosts.filter(post => post.title.toLowerCase().includes(this.searchQuery.toLowerCase()))
-      }
+
    },
-   //функція наглядач яка знаходитсья у watch має мати таку ж назву як й 
-   //модель за якою "наблюдаємо" - параметром вона приймає нове значення моделі
-   //watch - аналог useEffect в React
-   watch: {
-      //реагуємо на зміну в page - запуском фетч запиту
-      // page() {
-      //    this.fetchPosts()
-      // }
-   }
 }
 </script>
    
-   <!-- флаг scoped вказує, що стилі будуть застосована тільти для "цього" компоненту, й не будуть доступні ззовні -->
 <style>
 .app__btns {
    margin: 15px 0;
