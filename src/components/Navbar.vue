@@ -5,6 +5,7 @@
          <my-button @click="$router.push('/posts')">Пости</my-button>
          <my-button @click="$router.push('/about')" style="margin-left: 5px;">Про сайт</my-button>
          <my-button @click="$router.push('/store')" style="margin-left: 5px;">PostPageVuex</my-button>
+         <my-button @click="$router.push('/composition')" style="margin-left: 5px;">PostPageComposition</my-button>
       </div>
    </div>
 </template>
