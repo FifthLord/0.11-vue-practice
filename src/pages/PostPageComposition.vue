@@ -20,6 +20,7 @@
 import PostList from '@/components/PostList.vue';
 import PostForm from '@/components/PostForm.vue';
 import axios from 'axios';
+import { usePosts } from '@/hooks/usePosts';
 
 export default {
    components: {
@@ -36,7 +37,7 @@ export default {
       }
    },
    setup(props) {
-
+      const { posts, totalPages, isPostsLoading } = usePosts(10)
    }
 }
 </script>
