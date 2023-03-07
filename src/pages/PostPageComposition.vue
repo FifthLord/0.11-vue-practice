@@ -4,23 +4,23 @@
       <h1>Сторінка з постами</h1>
       <my-input v-model="searchQuery" placeholder="Пошук..." />
       <div class="app__btns">
-         <my-button @click="showDialog">Створити пост</my-button>
+         <my-button>Створити пост</my-button>
          <my-select v-model="selectedSort" :options="sortOptions"></my-select>
       </div>
       <my-dialog v-model:show="dialogVisible">
-         <post-form @create="createPost" />
+         <post-form />
       </my-dialog>
-      <post-list :posts="sortedAndSearchedPosts" @remove="removePost" v-if="!isPostsLoading" />
+      <post-list :posts="sortedAndSearchedPosts" v-if="!isPostsLoading" />
       <div v-else>Йде завантаження...</div>
-      <div v-intersection="loadMorePosts" class="observer"></div>
    </div>
 </template>
    
 <script>
 import PostList from '@/components/PostList.vue';
 import PostForm from '@/components/PostForm.vue';
-import axios from 'axios';
 import { usePosts } from '@/hooks/usePosts';
+import useSortedPosts from '@/hooks/useSortedPosts';
+import useSortedAndSearchedPosts from '@/hooks/useSortedAndSearchedPosts';
 
 export default {
    components: {
@@ -37,7 +37,18 @@ export default {
       }
    },
    setup(props) {
-      const { posts, totalPages, isPostsLoading } = usePosts(10)
+      const { posts, totalPages, isPostsLoading } = usePosts(10);
+      const { sortedPosts, selectedSort } = useSortedPosts(posts);
+      const { searchQuery, sortedAndSearchedPosts } = useSortedAndSearchedPosts(sortedPosts);
+
+      return {
+         posts,
+         totalPages,
+         isPostsLoading,
+         selectedSort,
+         searchQuery,
+         sortedAndSearchedPosts
+      }
    }
 }
 </script>
